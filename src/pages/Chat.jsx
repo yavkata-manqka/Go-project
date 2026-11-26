@@ -82,8 +82,8 @@ export default function Chat() {
           </>
         ) : (
           <>
-            <h1 className="h-title mt-3">Пиши анонимно на психолог</h1>
-            <p className="mt-2 text-lg text-ink/70">Без акаунт. Без име. Без обаждане.<br />Когато затвориш, разговорът изчезва.</p>
+            <h1 className="h-title mt-3">Пиши на психолог</h1>
+            <p className="mt-2 text-lg text-ink/70">Без регистрация. Без родители. Анонимно, ако искаш.<br />Когато затвориш, разговорът изчезва.</p>
           </>
         )}
         <div className="card mt-6 text-left">
@@ -97,8 +97,15 @@ export default function Chat() {
           </div>
           <button onClick={() => start(null)} className="btn-primary w-full mt-5 text-lg">💬 Започни чат</button>
         </div>
+        <a href="tel:116111" className="card mt-3 flex items-center gap-4 text-left bg-grape-50 hover:bg-grape-100 transition">
+          <span className="text-4xl" aria-hidden>📞</span>
+          <span>
+            <span className="block font-extrabold text-lg">Предпочиташ да говориш?</span>
+            <span className="text-sm text-ink/70">Звънни на <b>116 111</b>: безплатно, 24/7, отговарят психолози.</span>
+          </span>
+        </a>
         <ul className="mt-6 grid gap-2 text-left text-sm text-ink/70">
-          <li>🔒 Не питаме за име, телефон или училище.</li>
+          <li>🙈 Не питаме за име, телефон или училище.</li>
           <li>🧑‍⚕️ Отговарят психолози, не бот.</li>
           <li>🧪 <b>В демото</b> отговорите са предварително написани и са отбелязани като демо.</li>
           <li>📞 Ако ти е много тежко сега: <a className="font-bold text-grape-700 underline" href="tel:116111">116 111</a> или <a className="font-bold text-coral-600 underline" href="tel:112">112</a>.</li>
@@ -127,7 +134,10 @@ export default function Chat() {
           <p className="font-extrabold leading-tight">{psych.name} <span className="chip bg-mint-100 text-mint-700 !py-0 !px-2 text-xs">Психолог ✓</span></p>
           <p className="text-xs text-ink/60">🔒 Анонимен чат · демо профил</p>
         </div>
-        <button onClick={close} className="ml-auto btn-ghost !min-h-[44px] !px-3 text-sm shrink-0">🧹 Затвори и изтрий</button>
+        <div className="ml-auto flex gap-2 shrink-0">
+          <a href="tel:116111" className="btn-ghost !min-h-[44px] !px-3 text-sm" aria-label="Звънни на 116 111">📞</a>
+          <button onClick={close} className="btn-ghost !min-h-[44px] !px-3 text-sm">🧹 Затвори</button>
+        </div>
       </div>
 
       <div className="flex-1 py-4 flex flex-col gap-3" aria-live="polite">

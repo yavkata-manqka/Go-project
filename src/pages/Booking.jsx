@@ -130,6 +130,7 @@ export default function Booking() {
           {/* Нов час */}
           <section className="mt-8">
             <h2 className="text-xl font-black">Запази нов час</h2>
+            <p className="text-sm text-ink/60 mt-1">💡 Можеш да говориш с различни психолози. Понякога второ мнение помага да видиш нещата от друг ъгъл.</p>
             {active.length >= 2 ? (
               <p className="mt-2 rounded-2xl bg-grape-50 p-4">✋ Можеш да имаш до <b>2 активни часа</b> едновременно, за да има място за всички. Отмени един или изчакай да мине.</p>
             ) : (

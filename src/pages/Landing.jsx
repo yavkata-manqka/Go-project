@@ -2,17 +2,18 @@ import { Link } from 'react-router-dom'
 import Mascot from '../components/Mascot'
 import { SLOGAN } from '../components/Layout'
 
+const SRC = 'Източник: анкета на екипа на GotU, 44 младежи, ноември 2026'
 const STATS = [
-  { big: '[XX]%', text: 'от анкетираните ученици предпочитат да ПИШАТ, вместо да се обаждат по телефона', src: 'Източник: наша анкета, [брой] ученици, Бургас, [месец] 2026', color: 'bg-grape-100 text-grape-700' },
-  { big: '[XX]%', text: 'от анкетираните не биха отишли при училищния психолог, защото им е неудобно', src: 'Източник: наша анкета, [брой] ученици', color: 'bg-coral-100 text-coral-700' },
-  { big: '[XX]%', text: 'от анкетираните не знаят, че има безплатна линия 116 111 с психолози', src: 'Източник: наша анкета, [брой] ученици', color: 'bg-mint-100 text-mint-700' },
-  { big: '1 от 7', text: 'тийнейджъри между 10 и 19 години по света живее с психичен проблем', src: 'Източник: Световна здравна организация (СЗО), 2021', color: 'bg-yellow-100 text-yellow-800' },
+  { big: '57%', text: 'не знаят, че има безплатна линия 116 111 с психолози', src: SRC, color: 'bg-grape-100 text-grape-700' },
+  { big: '73%', text: 'никога не са ходили при училищния психолог, макар че 91% имат такъв', src: SRC, color: 'bg-coral-100 text-coral-700' },
+  { big: '45%', text: 'понякога или често имат нужда да поговорят с някого, но нямат с кого', src: SRC, color: 'bg-mint-100 text-mint-700' },
+  { big: '59%', text: 'биха ползвали приложение с мини задачи, серии и значки, свързано с психолог', src: SRC, color: 'bg-yellow-100 text-yellow-800' },
 ]
 
 const STEPS = [
   {
-    n: '01', emoji: '💬', title: 'Пиши веднага', tag: 'Без регистрация',
-    text: 'Анонимен чат с психолог, кратки статии за приятели, семейство, тормоз, стрес и любов, плюс бързи тестове. Нищо не се запазва.',
+    n: '01', emoji: '💬', title: 'Пиши веднага', tag: 'Без регистрация и без родители',
+    text: 'Пиши на психолог (или звънни, ако така ти е по-лесно), кратки статии за връзки, стрес, приятели и семейство, плюс бързи тестове за себе си.',
     color: 'from-grape-500 to-grape-700',
   },
   {
@@ -35,7 +36,10 @@ const PARENTS = [
 ]
 
 const FAQ = [
+  ['Трябва ли ми регистрация или разрешение от родител?', 'Не! Чатът с психолог, статиите и тестовете са без регистрация и без родители. Съгласие от родител трябва само ако си под 14 години и искаш акаунт, или ако искаш редовни сесии с психолог.'],
+  ['Мога ли да говоря с различни психолози?', 'Да. Можеш да си запазиш час при който психолог искаш, и после при друг. Понякога второ мнение помага да видиш нещата от друг ъгъл.'],
   ['Наистина ли е анонимно?', 'Да. В анонимния чат не ти трябва акаунт и нищо не се запазва след като затвориш. В общността се показва само прякорът ти, никога истинското име.'],
+  ['Не обичам да пиша. Мога ли да звънна?', 'Разбира се! Номерът 116 111 е безплатен и работи денонощно. В GotU бутонът за обаждане е винаги до чата.'],
   ['Кой ми отговаря?', 'Квалифицирани психолози, не бот и не изкуствен интелект. (В тази демо версия отговорите са предварително написани и са отбелязани като демо.)'],
   ['Струва ли нещо?', 'Не. GotU е безплатен за учениците.'],
   ['Защо ми трябва училищен код?', 'Един код = един акаунт. Така няма фалшиви профили и общността остава безопасна.'],
@@ -54,17 +58,18 @@ export default function Landing() {
         <div className="relative mx-auto max-w-6xl px-4 py-12 sm:py-20 grid md:grid-cols-2 gap-8 items-center">
           <div className="animate-fadeUp">
             <div className="flex flex-wrap gap-2 mb-5">
-              <span className="chip bg-white text-grape-700">🔒 Анонимно</span>
-              <span className="chip bg-white text-coral-600">💬 Пишеш, не звъниш</span>
+              <span className="chip bg-white text-grape-700">⚡ Веднага</span>
+              <span className="chip bg-white text-coral-600">💬 Пиши или 📞 звънни</span>
               <span className="chip bg-white text-mint-700">🆓 Безплатно</span>
+              <span className="chip bg-white text-ink/70">🙈 Анонимно, ако искаш</span>
             </div>
             <h1 className="text-4xl sm:text-6xl font-black leading-[1.05] tracking-tight">
               Психолог в джоба ти.
               <br />
-              <span className="bg-gradient-to-r from-grape-600 to-coral-500 bg-clip-text text-transparent">Само с текст.</span>
+              <span className="bg-gradient-to-r from-grape-600 to-coral-500 bg-clip-text text-transparent">Пиши или звънни.</span>
             </h1>
             <p className="mt-5 text-xl sm:text-2xl font-extrabold text-grape-700">„{SLOGAN}“</p>
-            <p className="mt-3 text-lg text-ink/70 max-w-md">GotU прави търсенето на помощ нормално, модерно и дори малко забавно.</p>
+            <p className="mt-3 text-lg text-ink/70 max-w-md">Без регистрация, без родители, без чакане. GotU прави търсенето на помощ нормално, модерно и дори малко забавно.</p>
             <div className="mt-7 flex flex-col sm:flex-row gap-3">
               <Link to="/chat" className="btn-primary text-lg">💬 Пиши анонимно сега</Link>
               <a href="#how" className="btn-ghost text-lg">Как работи 👇</a>
@@ -83,10 +88,10 @@ export default function Landing() {
       {/* ПРОБЛЕМЪТ */}
       <section className="mx-auto max-w-6xl px-4 py-16">
         <p className="chip bg-coral-100 text-coral-700 mb-3">Проблемът</p>
-        <h2 className="h-title max-w-3xl">Помощ има. Но тийнейджърите не звънят, а пишат.</h2>
+        <h2 className="h-title max-w-3xl">Помощ има. Но младите не стигат до нея.</h2>
         <p className="mt-4 text-lg text-ink/70 max-w-3xl">
-          В България има безплатна линия с психолози: <b>116 111</b>, денонощно. Но тя е почти само по <b>телефон</b>. А да отидеш при
-          училищния психолог често е неудобно: всички те виждат в коридора.
+          В България има безплатна линия с психолози: <b>116 111</b>, денонощно. Но повечето от нас дори не знаят за нея. А при
+          училищния психолог почти никой не ходи. Попитахме <b>44 младежи</b> какво мислят:
         </p>
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {STATS.map((s, i) => (
@@ -97,6 +102,10 @@ export default function Landing() {
             </div>
           ))}
         </div>
+        <p className="mt-4 text-sm text-ink/60">
+          📊 Още: почти наравно е колко биха <b>писали</b> (45%) и колко биха <b>звъннали</b> (43%), затова GotU предлага и двете.{' '}
+          <Link to="/about#survey" className="font-bold text-grape-700 underline">Всички резултати от анкетата →</Link>
+        </p>
       </section>
 
       {/* КАК РАБОТИ */}
@@ -163,7 +172,7 @@ export default function Landing() {
       <section className="mx-auto max-w-6xl px-4 py-16">
         <div className="rounded-4xl bg-gradient-to-r from-grape-600 to-coral-500 p-8 sm:p-12 text-white text-center">
           <h2 className="text-3xl sm:text-4xl font-black">{SLOGAN}</h2>
-          <p className="mt-3 text-lg text-white/90">Отнема 10 секунди. Без име. Без обаждане.</p>
+          <p className="mt-3 text-lg text-white/90">Отнема 10 секунди. Без регистрация. Пиши или звънни.</p>
           <Link to="/chat" className="mt-6 btn bg-white text-grape-700 text-lg shadow-lg hover:scale-105">💬 Пиши анонимно сега</Link>
         </div>
       </section>

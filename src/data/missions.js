@@ -1,5 +1,9 @@
 // Мисии: всяка е под 2 минути.
+// „Тест на деня“ е винаги в мисиите: в анкетата 73% казаха, че тестовете биха ги карали да влизат.
+export const QUIZ_MISSION = { id: 'quiz', type: 'quiz', emoji: '🧩', title: 'Тест на деня', desc: '5 бързи въпроса за теб. Под минута.' }
+
 export const MISSIONS = [
+  { id: 'picture', type: 'picture', emoji: '🎨', title: 'Покажи с картинка', desc: 'Трудно е да го кажеш с думи? Избери картинката, която най-много прилича на деня ти.' },
   { id: 'good', type: 'write', emoji: '💛', title: 'Едно хубаво нещо', desc: 'Напиши едно хубаво нещо от днес, дори да е мъничко.', placeholder: 'Днес ми беше хубаво, когато...', badge: 'gratitude' },
   { id: 'breath', type: 'breath', emoji: '🌬️', title: 'Дишане 4-4-4', desc: 'Вдишай 4 сек, задръж 4 сек, издишай 4 сек. Три пъти.', badge: 'breath' },
   { id: 'friend', type: 'action', emoji: '📱', title: 'Пиши на приятел', desc: 'Пиши на някого, с когото отдавна не сте говорили. Едно „Хей, как си?“ стига.', badge: 'friend' },
@@ -16,10 +20,10 @@ function hash(str) {
   return h
 }
 
-// Всеки ден: 2 или 3 мисии, винаги с дишане или „хубаво нещо“.
+// Всеки ден: 2 или 3 мисии: „Тест на деня“ + 1–2 други.
 export function missionsForDay(dateKey) {
   const h = hash(dateKey)
-  const count = h % 3 === 0 ? 2 : 3
+  const count = h % 3 === 0 ? 1 : 2
   const pool = [...MISSIONS]
   const out = []
   let x = h
@@ -28,6 +32,6 @@ export function missionsForDay(dateKey) {
     const m = pool.splice(x % pool.length, 1)[0]
     out.push(m)
   }
-  if (!out.some((m) => m.id === 'good' || m.id === 'breath')) out[0] = MISSIONS[h % 2]
-  return out
+  if (!out.some((m) => ['good', 'breath', 'picture'].includes(m.id))) out[0] = MISSIONS[h % 3]
+  return [QUIZ_MISSION, ...out]
 }

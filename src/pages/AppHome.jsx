@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useStore, dateKey, addDays, daysBetween, weekKey, MOODS, isActiveBooking } from '../store'
 import Mascot, { mascotStage } from '../components/Mascot'
 import { BADGES } from '../data/badges'
 import { missionsForDay } from '../data/missions'
+import { quizOfDay } from '../data/articles'
+import { quoteOfDay } from '../data/quotes'
 
 export default function AppHome() {
   const { state } = useStore()
@@ -21,14 +23,22 @@ function GuestHome() {
         <Mascot mood={5} streak={0} size={110} />
         <div>
           <h1 className="text-3xl font-black leading-tight">Хей! 👋</h1>
-          <p className="text-ink/70 text-lg">Не ти трябва акаунт. Избери откъде да започнеш.</p>
+          <p className="text-ink/70 text-lg">Без регистрация и без родители. Избери откъде да започнеш.</p>
         </div>
       </div>
       <div className="mt-6 grid gap-3">
-        <BigCard to="/chat" emoji="💬" title="Пиши анонимно на психолог" text="Без име, без обаждане. Нищо не се запазва." color="bg-gradient-to-r from-coral-400 to-coral-500 text-white" />
+        <BigCard to="/chat" emoji="💬" title="Пиши на психолог" text="Веднага. Анонимно, ако искаш. Нищо не се запазва." color="bg-gradient-to-r from-coral-400 to-coral-500 text-white" />
+        <a href="tel:116111" className="rounded-4xl p-5 flex items-center gap-4 shadow-sm transition hover:scale-[1.02] bg-grape-100">
+          <span className="text-5xl" aria-hidden>📞</span>
+          <span>
+            <span className="block text-xl font-black leading-tight">Предпочиташ да говориш?</span>
+            <span className="text-sm opacity-80">Звънни на 116 111: безплатно, 24/7, отговарят психолози</span>
+          </span>
+        </a>
         <BigCard to="/help" emoji="📚" title="Кратки съвети" text="Приятели, семейство, тормоз, стрес, любов, самочувствие" color="bg-mint-100" />
-        <BigCard to="/quiz" emoji="🧩" title="Бързи тестове" text="5 въпроса → резултат и съвет" color="bg-yellow-100" />
+        <BigCard to="/quiz" emoji="🧩" title="Тестове за себе си" text="6 теста по 5 въпроса → резултат и съвет" color="bg-yellow-100" />
       </div>
+      <QuoteCard />
       <div className="card mt-6 bg-gradient-to-br from-grape-600 to-grape-800 text-white">
         <p className="chip bg-white/20">Ниво 1</p>
         <h2 className="mt-2 text-2xl font-black">Имаш училищен код? 🎟️</h2>
@@ -143,6 +153,8 @@ function StudentHome() {
         </p>
       </div>
 
+      <QuoteCard />
+
       {away >= 2 && !todayMood && (
         <Notice color="bg-mint-50 border-mint-200">👋 Радваме се да те видим отново! Направи Vibe Check и продължаваме заедно.</Notice>
       )}
@@ -244,6 +256,16 @@ function StudentHome() {
   )
 }
 
+function QuoteCard() {
+  const { now } = useStore()
+  return (
+    <div className="mt-4 rounded-3xl bg-gradient-to-r from-yellow-50 to-coral-50 border-2 border-yellow-100 p-4">
+      <p className="text-xs font-extrabold uppercase tracking-wide text-coral-600">💭 Мисъл на деня</p>
+      <p className="mt-1 text-lg font-bold leading-snug">„{quoteOfDay(dateKey(now))}“</p>
+    </div>
+  )
+}
+
 function Notice({ children, color, onClose }) {
   return (
     <div className={`mt-4 rounded-3xl border-2 p-4 flex gap-3 items-start animate-fadeUp ${color}`}>
@@ -253,10 +275,21 @@ function Notice({ children, color, onClose }) {
   )
 }
 
+const PICTURES = [
+  { emoji: '☀️', label: 'Слънчево', reply: 'Хубаво! Запомни какво направи деня ти слънчев. ☀️' },
+  { emoji: '⛅', label: 'Облачно', reply: 'Малко облачно е ОК. Не всеки ден трябва да е слънчев.' },
+  { emoji: '🌧️', label: 'Дъждовно', reply: 'Дъждовните дни минават. Направи си нещо мило днес. 💜' },
+  { emoji: '⛈️', label: 'Буря', reply: 'Звучи бурно. Искаш ли да поговориш с някого? Бутонът е долу вдясно.' },
+  { emoji: '🌫️', label: 'Мъгла', reply: 'Когато е мъгливо, е трудно да видиш напред. Една малка стъпка стига.' },
+  { emoji: '🌈', label: 'Дъга', reply: 'След дъжд – дъга! Супер е, че ти е по-добре. 🌈' },
+]
+
 function Mission({ m, done, today }) {
   const { update } = useStore()
+  const nav = useNavigate()
   const [open, setOpen] = useState(false)
   const [text, setText] = useState('')
+  const [pic, setPic] = useState(null)
 
   const complete = () =>
     update((s) => {
@@ -298,6 +331,33 @@ function Mission({ m, done, today }) {
           )}
           {m.type === 'action' && <button onClick={complete} className="btn-mint w-full mt-3">Направих го ✓</button>}
           {m.type === 'breath' && <Breathing onDone={complete} />}
+          {m.type === 'quiz' && (() => {
+            const q = quizOfDay(today)
+            return (
+              <button onClick={() => nav(`/quiz/${q.id}?daily=1`)} className={`w-full mt-3 rounded-2xl p-3 flex items-center gap-3 font-extrabold text-left ${q.color}`}>
+                <span className="text-3xl" aria-hidden>{q.emoji}</span>
+                <span>Днес: „{q.title}“<span className="block text-xs font-bold text-ink/60">Натисни, за да започнеш</span></span>
+              </button>
+            )
+          })()}
+          {m.type === 'picture' && (
+            <>
+              <div className="mt-3 grid grid-cols-3 gap-2" role="radiogroup" aria-label="Картинка за деня">
+                {PICTURES.map((p) => (
+                  <button key={p.label} role="radio" aria-checked={pic === p} onClick={() => setPic(p)} className={`rounded-2xl py-3 flex flex-col items-center transition ${pic === p ? 'bg-grape-100 ring-2 ring-grape-500 scale-105' : 'bg-cream hover:scale-105'}`}>
+                    <span className="text-4xl" aria-hidden>{p.emoji}</span>
+                    <span className="text-xs font-bold">{p.label}</span>
+                  </button>
+                ))}
+              </div>
+              {pic && (
+                <div className="animate-fadeUp">
+                  <p className="mt-3 rounded-2xl bg-grape-50 p-3 font-bold">{pic.reply}</p>
+                  <button onClick={complete} className="btn-mint w-full mt-2">Готово ✓</button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
     </div>

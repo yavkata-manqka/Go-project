@@ -6,15 +6,28 @@ import { PSYCHOLOGISTS } from '../data/psychologists'
 
 const REASONS = ['Обидно', 'Спам', 'Притеснява ме', 'Някой е в опасност']
 
+// Групи по теми (идея от анкетата)
+export const GROUPS = [
+  { id: 'all', emoji: '🌍', name: 'Всички' },
+  { id: 'stress', emoji: '😰', name: 'Стрес' },
+  { id: 'love', emoji: '💘', name: 'Връзки' },
+  { id: 'friends', emoji: '👯', name: 'Приятели' },
+  { id: 'family', emoji: '🏠', name: 'Семейство' },
+  { id: 'general', emoji: '💬', name: 'Общи' },
+]
+
 export default function Community() {
   const { state, update, openCrisis, flagUrgent } = useStore()
   const [text, setText] = useState('')
   const [note, setNote] = useState(null)
+  const [group, setGroup] = useState('all')
   const role = state.role
+  const postGroup = group === 'all' ? 'general' : group
   const me = state.student
   const psych = PSYCHOLOGISTS[0] // в демото психологът е Елена
 
   const visible = state.community
+    .filter((m) => group === 'all' || (m.group || 'general') === group)
     .filter((m) => m.status === 'approved' || (m.status === 'pending' && (m.mine ? role === 'student' : role === 'admin')))
     .sort((a, b) => new Date(a.ts) - new Date(b.ts))
 
@@ -24,7 +37,7 @@ export default function Community() {
     if (!t) return
     setText('')
     if (role === 'psych') {
-      update((s) => s.community.push({ id: 'c' + Date.now(), author: psych.name, avatar: psych.emoji, kind: 'psych', text: t, status: 'approved', ts: new Date().toISOString(), reports: 0 }))
+      update((s) => s.community.push({ id: 'c' + Date.now(), author: psych.name, avatar: psych.emoji, kind: 'psych', group: postGroup, text: t, status: 'approved', ts: new Date().toISOString(), reports: 0 }))
       setNote({ type: 'ok', text: '✅ Публикувано веднага (психолозите не чакат одобрение).' })
       return
     }
@@ -36,7 +49,7 @@ export default function Community() {
       return
     }
     update((s) => {
-      s.community.push({ id: 'c' + Date.now(), author: me.nickname, avatar: me.avatar, kind: 'student', text: t, status: 'pending', mine: true, ts: new Date().toISOString(), reports: 0 })
+      s.community.push({ id: 'c' + Date.now(), author: me.nickname, avatar: me.avatar, kind: 'student', group: postGroup, text: t, status: 'pending', mine: true, ts: new Date().toISOString(), reports: 0 })
       if (!s.student.badges.includes('community')) s.student.badges.push('community')
     })
     setNote({ type: 'wait', text: '⏳ Изпратено! Модератор ще го провери до няколко минути.' })
@@ -54,7 +67,22 @@ export default function Community() {
         <span className="chip bg-coral-100 text-coral-700">🚩 Докладвай, ако нещо не е наред</span>
       </div>
 
-      <div className="mt-5 grid gap-3">
+      <div className="mt-4 flex gap-2 overflow-x-auto pb-1 -mx-4 px-4" role="tablist" aria-label="Групи">
+        {GROUPS.map((g) => (
+          <button
+            key={g.id}
+            role="tab"
+            aria-selected={group === g.id}
+            onClick={() => setGroup(g.id)}
+            className={`shrink-0 chip min-h-[44px] !px-4 text-base transition ${group === g.id ? 'bg-grape-600 text-white' : 'bg-white text-ink/70 hover:bg-grape-50'}`}
+          >
+            {g.emoji} {g.name}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 grid gap-3">
+        {visible.length === 0 && <p className="card text-center text-ink/60">Още няма съобщения в тази група. Бъди първият/първата! ✨</p>}
         {visible.map((m) => {
           const day = dateKey(m.ts)
           const sep = day !== lastDay
@@ -92,7 +120,7 @@ export default function Community() {
               className="input"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder={role === 'psych' ? `Пиши като ${psych.name} (Психолог ✓)` : `Пиши като ${me.nickname}…`}
+              placeholder={`${GROUPS.find((g) => g.id === postGroup).emoji} ${role === 'psych' ? `Пиши като ${psych.name} (Психолог ✓)` : `Пиши като ${me.nickname}…`}`}
               autoComplete="off"
             />
             <button className="btn-grape shrink-0 !px-4" aria-label="Изпрати">➤</button>

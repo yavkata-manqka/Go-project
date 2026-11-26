@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { useStore, dateKey } from '../store'
 import { ANSWERS, QUIZZES } from '../data/articles'
 import Mascot from '../components/Mascot'
 
@@ -7,7 +8,7 @@ export function QuizList() {
   return (
     <div className="page">
       <h1 className="h-title">🧩 Бързи тестове</h1>
-      <p className="mt-1 text-ink/70">5 въпроса, под минута. Само за теб, нищо не се запазва.</p>
+      <p className="mt-1 text-ink/70">5 въпроса, под минута. Само за теб, нищо не се запазва. Без регистрация.</p>
       <div className="mt-6 grid gap-3">
         {QUIZZES.map((q) => (
           <Link key={q.id} to={`/quiz/${q.id}`} className={`rounded-4xl p-5 flex items-center gap-4 transition hover:scale-[1.02] ${q.color}`}>
@@ -37,10 +38,22 @@ export function QuizPage() {
   const { id } = useParams()
   const quiz = QUIZZES.find((q) => q.id === id)
   const [answers, setAnswers] = useState([])
-  if (!quiz) return <div className="page">Няма такъв тест.</div>
+  const [params] = useSearchParams()
+  const { state, now, update } = useStore()
+  const daily = params.get('daily') === '1'
+  const done = !!quiz && answers.length >= quiz.questions.length
 
+  // „Тест на деня“ → отбелязваме мисията като изпълнена
+  useEffect(() => {
+    if (!done || !daily || state.role !== 'student' || !state.student) return
+    const today = dateKey(now)
+    if ((state.student.missionsDone[today] || []).includes('quiz')) return
+    update((s) => (s.student.missionsDone[today] = [...(s.student.missionsDone[today] || []), 'quiz']))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [done])
+
+  if (!quiz) return <div className="page">Няма такъв тест.</div>
   const step = answers.length
-  const done = step >= quiz.questions.length
   const score = answers.reduce((a, b) => a + b, 0)
   const result = quiz.results.find((r) => score <= r.max)
   const mood = score <= 5 ? 5 : score <= 10 ? 3 : 2
@@ -56,7 +69,11 @@ export function QuizPage() {
           <p className="mt-2 text-sm text-ink/50">Резултат: {score} от 15</p>
         </div>
         <Disclaimer />
+        {daily && state.role === 'student' && (
+          <p className="mt-3 rounded-2xl bg-mint-100 text-mint-700 p-3 font-bold animate-pop">✅ Мисията „Тест на деня“ е изпълнена!</p>
+        )}
         <div className="mt-5 grid gap-3">
+          {daily && <Link to="/app" className="btn-grape">🏠 Обратно към мисиите</Link>}
           <Link to="/chat" className="btn-primary">💬 Поговори с психолог</Link>
           <Link to="/help" className="btn-ghost">📚 Прочети съвети</Link>
           <button onClick={() => setAnswers([])} className="btn-ghost">🔁 Пак</button>

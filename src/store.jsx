@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { PSYCHOLOGISTS } from './data/psychologists'
 
-const KEY = 'gotu-demo-v1'
+const KEY = 'gotu-demo-v2'
 const DAY = 24 * 60 * 60 * 1000
 // Непотвърден час се освобождава 2 часа преди началото
 export const CONFIRM_DEADLINE = 2 * 60 * 60 * 1000
@@ -108,7 +108,7 @@ function seedState() {
   const others = later.filter((s) => s.id !== myFirst.id)
 
   return {
-    version: 1,
+    version: 2,
     role: 'guest',
     dayOffset: 0,
     student: seedStudent(now),
@@ -120,13 +120,15 @@ function seedState() {
       { id: 'b-demo-4', owner: 'other', nickname: 'Мечо', psychId: 'p3', slotId: others[9]?.id, start: others[9]?.start, mode: 'chat', status: 'needs-approval', createdAt: ts(5), note: 'Има 2 пропуснати сесии' },
     ],
     community: [
-      { id: 'c1', author: 'Елена Маринова', avatar: '🌷', kind: 'psych', text: 'Здравейте, хора! 💜 Тази седмица много от вас пишат за изпитите. Напомням: почивките са част от ученето, не мързел.', status: 'approved', ts: ts(26), reports: 0 },
-      { id: 'c2', author: 'Луна🌙', avatar: '🦊', kind: 'student', text: 'Някой друг ли не може да спи преди контролно? Аз лежа до 2 и мисля 😩', status: 'approved', ts: ts(22), reports: 0 },
-      { id: 'c3', author: 'Пиксел', avatar: '🐸', kind: 'student', text: 'Да, аз! Пробвах дишането 4-4-4 от мисиите и честно помогна малко.', status: 'approved', ts: ts(21), reports: 0 },
-      { id: 'c4', author: 'Калоян Петков', avatar: '🎧', kind: 'psych', text: 'Пиксел, супер съвет! Луна, ако искаш, пиши ми в личен чат, ще измислим план заедно.', status: 'approved', ts: ts(20), reports: 0 },
-      { id: 'c5', author: 'Звездичка', avatar: '⭐', kind: 'student', text: 'Днес за първи път казах на мама, че ми е тежко. Тя ме прегърна. Не очаквах 🥹', status: 'approved', ts: ts(6), reports: 0 },
-      { id: 'c6', author: 'Нинджа42', avatar: '🐼', kind: 'student', text: 'Някой знае ли как да си намеря приятели в нов клас?', status: 'pending', ts: ts(2), reports: 0 },
-      { id: 'c7', author: 'Зоро', avatar: '🐯', kind: 'student', text: 'Тоя чат е за хора без живот лол', status: 'approved', ts: ts(4), reports: 2 },
+      { id: 'c1', group: 'stress', author: 'Елена Маринова', avatar: '🌷', kind: 'psych', text: 'Здравейте, хора! 💜 Тази седмица много от вас пишат за изпитите. Напомням: почивките са част от ученето, не мързел.', status: 'approved', ts: ts(26), reports: 0 },
+      { id: 'c2', group: 'stress', author: 'Луна🌙', avatar: '🦊', kind: 'student', text: 'Някой друг ли не може да спи преди контролно? Аз лежа до 2 и мисля 😩', status: 'approved', ts: ts(22), reports: 0 },
+      { id: 'c3', group: 'stress', author: 'Пиксел', avatar: '🐸', kind: 'student', text: 'Да, аз! Пробвах дишането 4-4-4 от мисиите и честно помогна малко.', status: 'approved', ts: ts(21), reports: 0 },
+      { id: 'c4', group: 'stress', author: 'Калоян Петков', avatar: '🎧', kind: 'psych', text: 'Пиксел, супер съвет! Луна, ако искаш, пиши ми в личен чат, ще измислим план заедно.', status: 'approved', ts: ts(20), reports: 0 },
+      { id: 'c5', group: 'family', author: 'Звездичка', avatar: '⭐', kind: 'student', text: 'Днес за първи път казах на мама, че ми е тежко. Тя ме прегърна. Не очаквах 🥹', status: 'approved', ts: ts(6), reports: 0 },
+      { id: 'c6', group: 'friends', author: 'Нинджа42', avatar: '🐼', kind: 'student', text: 'Някой знае ли как да си намеря приятели в нов клас?', status: 'pending', ts: ts(2), reports: 0 },
+      { id: 'c8', group: 'love', author: 'Кафенце', avatar: '☕', kind: 'student', text: 'Как разбирате, че някой ви харесва? Питам за приятел 👀😅', status: 'approved', ts: ts(12), reports: 0 },
+      { id: 'c9', group: 'love', author: 'Дария Костова', avatar: '🌙', kind: 'psych', text: 'Хаха, класически въпрос 😄 Най-сигурният начин е… да попиташ. А ако ви е интересно какво е здрава връзка, има нов тест в „Тестове“ 💘', status: 'approved', ts: ts(11), reports: 0 },
+      { id: 'c7', group: 'general', author: 'Зоро', avatar: '🐯', kind: 'student', text: 'Тоя чат е за хора без живот лол', status: 'approved', ts: ts(4), reports: 2 },
     ],
     reports: [
       { id: 'r1', msgId: 'c7', by: 'Звездичка', reason: 'Обидно', ts: ts(3) },
@@ -164,7 +166,7 @@ function load() {
     const raw = localStorage.getItem(KEY)
     if (raw) {
       const s = JSON.parse(raw)
-      if (s.version === 1) return s
+      if (s.version === 2) return s
     }
   } catch (e) {
     /* празно */
