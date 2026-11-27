@@ -5,10 +5,15 @@ import { ANSWERS, QUIZZES } from '../data/articles'
 import Mascot from '../components/Mascot'
 
 export function QuizList() {
+  const { state } = useStore()
+  const history = state.role === 'student' ? state.student?.quizResults || [] : []
   return (
     <div className="page">
-      <h1 className="h-title">🧩 Бързи тестове</h1>
-      <p className="mt-1 text-ink/70">5 въпроса, под минута. Само за теб, нищо не се запазва. Без регистрация.</p>
+      <h1 className="h-title">🧩 Тестове за себе си</h1>
+      <p className="mt-1 text-ink/70">
+        5 въпроса, под минута. Без регистрация.{' '}
+        {state.role === 'student' ? 'Резултатите ти се пазят само в твоя браузър, за да видиш как се променяш.' : 'Нищо не се запазва.'}
+      </p>
       <div className="mt-6 grid gap-3">
         {QUIZZES.map((q) => (
           <Link key={q.id} to={`/quiz/${q.id}`} className={`rounded-4xl p-5 flex items-center gap-4 transition hover:scale-[1.02] ${q.color}`}>
@@ -16,6 +21,7 @@ export function QuizList() {
             <span>
               <span className="block text-xl font-black">{q.title}</span>
               <span className="text-sm text-ink/60">5 въпроса · 1 мин</span>
+              <History list={history.filter((h) => h.quizId === q.id)} quiz={q} />
             </span>
             <span className="ml-auto text-2xl" aria-hidden>›</span>
           </Link>
@@ -23,6 +29,21 @@ export function QuizList() {
       </div>
       <Disclaimer />
     </div>
+  )
+}
+
+// Последните резултати: виж как се променяш във времето
+function History({ list, quiz }) {
+  if (!list.length) return null
+  const last = list.slice(-4)
+  return (
+    <span className="mt-1 flex flex-wrap items-center gap-1 text-xs font-bold text-ink/70">
+      Твоите резултати:
+      {last.map((h, i) => {
+        const r = quiz.results.find((x) => h.score <= x.max)
+        return <span key={i} title={`${h.date}: ${r.title}`} className="chip bg-white/70 !py-0 !px-1.5">{r.emoji}</span>
+      })}
+    </span>
   )
 }
 
@@ -43,12 +64,17 @@ export function QuizPage() {
   const daily = params.get('daily') === '1'
   const done = !!quiz && answers.length >= quiz.questions.length
 
-  // „Тест на деня“ → отбелязваме мисията като изпълнена
+  // Ученик: пазим резултата (за история във времето) и отбелязваме „Тест на деня“
   useEffect(() => {
-    if (!done || !daily || state.role !== 'student' || !state.student) return
+    if (!done || state.role !== 'student' || !state.student) return
     const today = dateKey(now)
-    if ((state.student.missionsDone[today] || []).includes('quiz')) return
-    update((s) => (s.student.missionsDone[today] = [...(s.student.missionsDone[today] || []), 'quiz']))
+    const score = answers.reduce((a, b) => a + b, 0)
+    update((s) => {
+      s.student.quizResults = [...(s.student.quizResults || []), { quizId: quiz.id, date: today, score }]
+      if (daily && !(s.student.missionsDone[today] || []).includes('quiz')) {
+        s.student.missionsDone[today] = [...(s.student.missionsDone[today] || []), 'quiz']
+      }
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [done])
 

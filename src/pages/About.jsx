@@ -106,6 +106,17 @@ function Survey() {
           </div>
         ))}
       </div>
+      <div className="card mt-4">
+        <h3 className="text-xl font-black">🛠️ Какво променихме според анкетата</h3>
+        <div className="mt-3 grid gap-2">
+          {SURVEY.changes.map(([found, did]) => (
+            <div key={found} className="rounded-2xl bg-cream p-3 grid sm:grid-cols-2 gap-1 sm:gap-4">
+              <p className="font-bold">📊 {found}</p>
+              <p className="text-ink/80">→ {did}</p>
+            </div>
+          ))}
+        </div>
+      </div>
       <div className="card mt-4 bg-mint-50">
         <h3 className="font-extrabold">✍️ Вашите идеи, които добавихме</h3>
         <ul className="mt-2 grid gap-1 text-ink/80">

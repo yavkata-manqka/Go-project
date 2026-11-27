@@ -3,6 +3,7 @@
 export const QUIZ_MISSION = { id: 'quiz', type: 'quiz', emoji: '🧩', title: 'Тест на деня', desc: '5 бързи въпроса за теб. Под минута.' }
 
 export const MISSIONS = [
+  { id: 'save116', type: 'action', emoji: '📞', title: 'Запиши 116 111', desc: '57% от младежите не знаят за този номер. Запиши го в телефона си като „Психолог 24/7“: 116 111. Безплатно е.' },
   { id: 'picture', type: 'picture', emoji: '🎨', title: 'Покажи с картинка', desc: 'Трудно е да го кажеш с думи? Избери картинката, която най-много прилича на деня ти.' },
   { id: 'good', type: 'write', emoji: '💛', title: 'Едно хубаво нещо', desc: 'Напиши едно хубаво нещо от днес, дори да е мъничко.', placeholder: 'Днес ми беше хубаво, когато...', badge: 'gratitude' },
   { id: 'breath', type: 'breath', emoji: '🌬️', title: 'Дишане 4-4-4', desc: 'Вдишай 4 сек, задръж 4 сек, издишай 4 сек. Три пъти.', badge: 'breath' },

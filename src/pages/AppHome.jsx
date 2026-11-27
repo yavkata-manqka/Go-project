@@ -6,6 +6,7 @@ import { BADGES } from '../data/badges'
 import { missionsForDay } from '../data/missions'
 import { quizOfDay } from '../data/articles'
 import { quoteOfDay } from '../data/quotes'
+import Stories from '../components/Stories'
 
 export default function AppHome() {
   const { state } = useStore()
@@ -37,6 +38,14 @@ function GuestHome() {
         </a>
         <BigCard to="/help" emoji="📚" title="Кратки съвети" text="Приятели, семейство, тормоз, стрес, любов, самочувствие" color="bg-mint-100" />
         <BigCard to="/quiz" emoji="🧩" title="Тестове за себе си" text="6 теста по 5 въпроса → резултат и съвет" color="bg-yellow-100" />
+      </div>
+      <Stories />
+      <div className="card mt-5 flex gap-4 items-start border-2 border-mint-200">
+        <span className="text-4xl" aria-hidden>💡</span>
+        <div>
+          <p className="font-extrabold text-lg">Знаеше ли?</p>
+          <p className="text-ink/75">57% от младежите в нашата анкета не знаят, че има <b>безплатен номер с психолози: 116 111</b>. Денонощно е. Запиши го в телефона си, може да помогне на теб или на приятел.</p>
+        </div>
       </div>
       <QuoteCard />
       <div className="card mt-6 bg-gradient-to-br from-grape-600 to-grape-800 text-white">
@@ -74,6 +83,7 @@ const MASCOT_TALK = {
 function StudentHome() {
   const { state, now, update, nextDay } = useStore()
   const st = state.student
+  const gameOn = st.gameOn !== false
   const today = dateKey(now)
   const todayMood = st.moodHistory.find((m) => m.date === today)?.level
   const freezesLeft = 2 - (st.freezeWeek === weekKey(now) ? st.freezesUsed : 0)
@@ -137,7 +147,7 @@ function StudentHome() {
           <p className="text-sm text-ink/60">Здрасти,</p>
           <p className="text-xl font-black leading-tight">{st.nickname}</p>
         </div>
-        <div className="ml-auto flex gap-2">
+        <div className={`ml-auto flex gap-2 ${gameOn ? '' : 'hidden'}`}>
           <span className="chip bg-coral-100 text-coral-700 text-lg" title="Дни поред">🔥 {st.streak}</span>
           <span className="chip bg-sky-100 text-sky-700 text-lg" title="Замразявания тази седмица">❄️ {freezesLeft}</span>
         </div>
@@ -147,7 +157,7 @@ function StudentHome() {
       <div className="card mt-4 text-center bg-gradient-to-b from-grape-50 to-white">
         <div className="flex justify-center"><Mascot mood={todayMood || 4} streak={st.streak} size={170} /></div>
         <p className="font-extrabold text-lg">{MASCOT_TALK[todayMood || 0]}</p>
-        <p className="text-sm text-ink/60 mt-1">
+        <p className={`text-sm text-ink/60 mt-1 ${gameOn ? '' : 'hidden'}`}>
           {stage.name}
           {nextAt && <> · още {nextAt - st.streak} {nextAt - st.streak === 1 ? 'ден' : 'дни'} до следващото ниво 🌱</>}
         </p>
@@ -215,11 +225,33 @@ function StudentHome() {
         )}
       </section>
 
+      {/* Бързи връзки */}
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <Link to="/booking" className="rounded-3xl p-4 bg-mint-100 font-extrabold hover:scale-[1.02] transition">
+          📅 Час при психолог
+          <span className="block text-xs font-bold text-ink/60">{activeBookings.length ? `${activeBookings.length} активен/и` : 'Вземи значка „Смелост“ 🦁'}</span>
+        </Link>
+        <Link to="/community" className="rounded-3xl p-4 bg-coral-100 font-extrabold hover:scale-[1.02] transition">
+          👥 Чат с младежи
+          <span className="block text-xs font-bold text-ink/60">Групи: стрес, връзки, приятели…</span>
+        </Link>
+        <Link to="/quiz" className="rounded-3xl p-4 bg-yellow-100 font-extrabold hover:scale-[1.02] transition">
+          🧩 Всички тестове
+          <span className="block text-xs font-bold text-ink/60">Виж резултатите си във времето</span>
+        </Link>
+        <Link to="/chat" className="rounded-3xl p-4 bg-grape-100 font-extrabold hover:scale-[1.02] transition">
+          💬 Пиши на психолог
+          <span className="block text-xs font-bold text-ink/60">Или звънни на 116 111</span>
+        </Link>
+      </div>
+
+      <Stories />
+
       {/* Настроение */}
       <MoodHistory history={st.moodHistory} now={now} />
 
       {/* Значки */}
-      <section className="card mt-4">
+      <section className={`card mt-4 ${gameOn ? '' : 'hidden'}`}>
         <h2 className="text-xl font-black">🏅 Значки</h2>
         <div className="mt-3 grid grid-cols-3 sm:grid-cols-5 gap-2">
           {Object.entries(BADGES).map(([id, b]) => {
@@ -235,16 +267,21 @@ function StudentHome() {
         </div>
       </section>
 
-      {/* Бързи връзки */}
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <Link to="/booking" className="rounded-3xl p-4 bg-mint-100 font-extrabold hover:scale-[1.02] transition">
-          📅 Час при психолог
-          <span className="block text-xs font-bold text-ink/60">{activeBookings.length ? `${activeBookings.length} активен/и` : 'Вземи значка „Смелост“ 🦁'}</span>
-        </Link>
-        <Link to="/community" className="rounded-3xl p-4 bg-coral-100 font-extrabold hover:scale-[1.02] transition">
-          👥 Общност
-          <span className="block text-xs font-bold text-ink/60">Пиши с прякор</span>
-        </Link>
+      <div className="card mt-4 flex items-center gap-3">
+        <span className="text-3xl" aria-hidden>🎮</span>
+        <div className="flex-1">
+          <p className="font-extrabold">Серия и значки</p>
+          <p className="text-sm text-ink/60">Не обичаш игрите? Изключи ги. Тестовете, мисиите и чатът остават.</p>
+        </div>
+        <button
+          role="switch"
+          aria-checked={gameOn}
+          aria-label="Серия и значки"
+          onClick={() => update((s) => (s.student.gameOn = !gameOn))}
+          className={`relative w-16 h-9 shrink-0 rounded-full transition ${gameOn ? 'bg-mint-500' : 'bg-gray-300'}`}
+        >
+          <span className={`absolute top-1 w-7 h-7 rounded-full bg-white shadow transition-all ${gameOn ? 'left-8' : 'left-1'}`} />
+        </button>
       </div>
 
       <div className="mt-6 rounded-3xl border-2 border-dashed border-grape-200 p-4 text-sm">

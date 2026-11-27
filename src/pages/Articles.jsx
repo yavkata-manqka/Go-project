@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ARTICLES, TOPICS } from '../data/articles'
 import { useStore } from '../store'
+import Stories from '../components/Stories'
 
 export function ArticleList() {
   const [topic, setTopic] = useState(null)
@@ -10,6 +11,7 @@ export function ArticleList() {
     <div className="page">
       <h1 className="h-title">📚 Кратки съвети</h1>
       <p className="mt-1 text-ink/70">По 2–3 минути четене. Без лекции, обещаваме.</p>
+      <Stories />
       <div className="mt-5 grid grid-cols-3 gap-2">
         {TOPICS.map((t) => (
           <button

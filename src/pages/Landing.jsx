@@ -7,7 +7,6 @@ const STATS = [
   { big: '57%', text: 'не знаят, че има безплатна линия 116 111 с психолози', src: SRC, color: 'bg-grape-100 text-grape-700' },
   { big: '73%', text: 'никога не са ходили при училищния психолог, макар че 91% имат такъв', src: SRC, color: 'bg-coral-100 text-coral-700' },
   { big: '45%', text: 'понякога или често имат нужда да поговорят с някого, но нямат с кого', src: SRC, color: 'bg-mint-100 text-mint-700' },
-  { big: '59%', text: 'биха ползвали приложение с мини задачи, серии и значки, свързано с психолог', src: SRC, color: 'bg-yellow-100 text-yellow-800' },
 ]
 
 const STEPS = [
@@ -93,7 +92,7 @@ export default function Landing() {
           В България има безплатна линия с психолози: <b>116 111</b>, денонощно. Но повечето от нас дори не знаят за нея. А при
           училищния психолог почти никой не ходи. Попитахме <b>44 младежи</b> какво мислят:
         </p>
-        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-8 grid sm:grid-cols-3 gap-4">
           {STATS.map((s, i) => (
             <div key={i} className="card flex flex-col animate-fadeUp" style={{ animationDelay: `${i * 0.08}s` }}>
               <div className={`self-start rounded-2xl px-3 py-1 text-4xl font-black ${s.color}`}>{s.big}</div>
